@@ -12,6 +12,11 @@ mercadopago.configure({
   access_token:"TEST-4118311813066874-032322-792fbd5a35ee362bd406466a107faae5-659536649",
 });
 
+app.get('/', (req,res)=>{
+  res.status(200).send('welcome to the api')
+
+})
+
 app.get("/verify", async (req,res) => {
     console.log({req,res})
     res.status(200).json({ req, res }).send({req});
