@@ -48,7 +48,9 @@ app.post("/pay", async (req,res) => {
     }
 })
 
+let PORT = process.env.PORT || 8080
+
 
 app.listen(8080, () => {
-  console.log("server running on port 8080");
+  console.log(`server running on port 8080 ${PORT}`);
 });
