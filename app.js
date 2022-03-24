@@ -14,9 +14,12 @@ mercadopago.configure({
 
 
 
-app.get("/verify", async (req,res) => {
+app.post("/verify", async (req,res) => {
+  let notifications = {
+    req: req
+  }
     console.log({req,res})
-    res.status(200).json({ req, res }).send({req});
+    res.status(200).json({ req: req, res: res }).send({req});
 })
 
 app.post("/pay", async (req,res) => {
@@ -36,6 +39,7 @@ app.post("/pay", async (req,res) => {
           pending: "",
           success: "http://localhost:8080/verify",
         },
+        notification_url: "https://feriahermana-api.herokuapp.com/",
       };
       const response = await mercadopago.preferences.create(preference);
       const preferenceId = response.body.id
