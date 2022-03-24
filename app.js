@@ -13,7 +13,7 @@ mercadopago.configure({
 });
 
 app.get('/', (req,res)=>{
-  res.status(200).send('welcome to the api')
+  res.status(200).json('welcome to the api')
 
 })
 
@@ -52,5 +52,5 @@ let PORT = process.env.PORT || 8080
 
 
 app.listen(8080, () => {
-  console.log(`server running on port 8080 ${PORT}`);
+  console.log(`server running on port ${PORT}`);
 });
