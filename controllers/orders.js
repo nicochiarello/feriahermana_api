@@ -78,7 +78,7 @@ exports.createOrder = async (req, res) => {
 
 exports.verify = async (req,res) => {
   try {
-    res.json(req,res)
+    res.status(200).json({req,res})
     
   } catch (error) {
     
