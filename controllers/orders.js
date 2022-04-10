@@ -78,8 +78,8 @@ exports.createOrder = async (req, res) => {
 
 exports.verify = async (req,res) => {
   try {
-    console.log(req);
-    res.status(200).json({msg: "hola", reqb: req.body, resB: res})
+    console.log(res);
+    res.status(200).json({msg: "received"})
     
   } catch (error) {
     res.status(500).json({error});
