@@ -83,8 +83,8 @@ exports.verify = async (req,res) => {
   try {
     console.log(id);
 
-    const paymentStatus = axios.get(`https://api.mercadopago.com/v1/payments/${id}`, {Authorization:"Bearer APP_USR-4118311813066874-032322-c78f760dfd1e2490d6aeb2776d239e93-659536649"});
-
+    const paymentStatus = await axios.get(`https://api.mercadopago.com/v1/payments/${id}`, {Authorization:"Bearer APP_USR-4118311813066874-032322-c78f760dfd1e2490d6aeb2776d239e93-659536649"});
+    console.log(paymentStatus);
     res.status(200).json({id: id, payment: paymentStatus})
     
   } catch (error) {
