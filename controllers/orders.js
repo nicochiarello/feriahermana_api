@@ -78,24 +78,6 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-const changeStock = async (id) => {
-  const verify = await axios.get(
-    "https://feriahermana-api.herokuapp.com/api/products"
-  );   
-  return verify
-}
 
 
-exports.verify = async (req,res) => {
-  try {
-    const id = req.query.id
-    console.log("este es el id: " + id);
-    console.log({axiosTest: changeStock(id)});
 
-    res.status(200)
-    
-  } catch (error) {
-    console.log({err: error});
-    res.status(500).json({error});
-  }
-}
