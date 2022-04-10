@@ -8,7 +8,7 @@ const mercadopago = require("mercadopago");
 // Agrega credenciales
 mercadopago.configure({
   access_token:
-    "TEST-4118311813066874-032322-792fbd5a35ee362bd406466a107faae5-659536649",
+    "APP_USR-4118311813066874-032322-c78f760dfd1e2490d6aeb2776d239e93-659536649",
 });
 
 exports.getAll = async (req, res) => {
