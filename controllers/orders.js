@@ -79,7 +79,7 @@ exports.createOrder = async (req, res) => {
 };
 
 const changeStock = async (id) => {
-  const verify = axios.get(
+  const verify = await axios.get(
     "https://feriahermana-api.herokuapp.com/api/products"
   );   
   return verify
