@@ -1,60 +1,30 @@
 const express = require("express");
 const app = express();
-
-
-
-app.use(express.json())
-
-// SDK de Mercado Pago
-const mercadopago = require("mercadopago");
-// Agrega credenciales
-mercadopago.configure({
-  access_token:"TEST-4118311813066874-032322-792fbd5a35ee362bd406466a107faae5-659536649",
-});
-
-
-
-app.post("/verify", async (req,res) => {
-  let notifications = {
-    req: req
-  }
-    console.log({req,res})
-    res.status(200).json({ req: req, res: res }).send({req});
-})
-
-app.post("/pay", async (req,res) => {
-    try {
-      // Crea un objeto de preferencia
-      let preference = {
-        items: [
-          {
-            title: "Mi producto",
-            unit_price: 100,
-            quantity: 1,
-          },
-        ],
-        additional_info: "orderId: 25",
-        back_urls: {
-          failure: "",
-          pending: "",
-          success: "http://localhost:8080/verify",
-        },
-        notification_url: "https://feriahermana-api.herokuapp.com/",
-      };
-      const response = await mercadopago.preferences.create(preference);
-      const preferenceId = response.body.id
-      res.status(200).json(response)
-    } catch (error) {
-        
-    }
-})
+const mongoose = require("mongoose");
+const productRoutes = require("./routes/products");
+const userRoutes = require('./routes/users')
+const categoriesRoutes = require('./routes/categories')
+const ordersRoute = require('./routes/orders')
+const cors = require("cors");
+app.use(express.json());
+app.use(cors({ origin: "*" }));
 
 app.get("/", (req, res) => {
   res.status(200).json("welcome to the api");
 });
 
-let PORT = process.env.PORT || 8080
+app.use("/api", productRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/orders", ordersRoute);
+app.use("/api/categories", categoriesRoutes)
+mongoose
+  .connect(
+    "mongodb+srv://user:gayatry@cluster0.5yfsd.mongodb.net/feriahermana?retryWrites=true&w=majority"
+  )
+  .then(() => console.log("db connected"))
+  .catch((err) => console.log(err));
 
+let PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);
