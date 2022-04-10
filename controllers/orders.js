@@ -1,7 +1,7 @@
 const Order = require("../models/orders");
 const mongoose = require("mongoose");
 const User = require("../models/user");
-
+const axios = require('axios')
 
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
@@ -38,6 +38,8 @@ exports.createOrder = async (req, res) => {
         pending: "",
         success: "http://localhost:3000/",
       },
+      notification_url:
+        "https://feriahermana-api.herokuapp.com/api/orders/verify",
     };
 
     orderReceived.products.map((i) =>
@@ -77,9 +79,13 @@ exports.createOrder = async (req, res) => {
 
 
 exports.verify = async (req,res) => {
+  const id = req.query.id
   try {
-    console.log(res);
-    res.status(200).json({msg: "received"})
+    console.log(id);
+    const payment = await axios.get(`https://api.mercadopago.com/v1/payments/${id}`);
+    console.log(payment);
+
+    res.status(200).json({id: id, msg: payment})
     
   } catch (error) {
     res.status(500).json({error});
