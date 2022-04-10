@@ -84,7 +84,36 @@ try {
   console.log({req: req});
   console.log({res: res});
   console.log({resBody: res.body});
-  res.status(200).json({request:res.body})
+
+
+  var payment_data = {
+    transaction_amount: Number(req.body.transactionAmount),
+    token: req.body.token,
+    description: req.body.description,
+    installments: Number(req.body.installments),
+    payment_method_id: req.body.paymentMethodId,
+    issuer_id: req.body.issuer,
+    notification_url:
+      "https://feriahermana-api.herokuapp.com/api/orders/verify",
+    payer: {
+      email: req.body.email,
+      identification: {
+        type: req.body.docType,
+        number: req.body.docNumber,
+      },
+    },
+  };
+
+  mercadopago.payment.save(payment_data)
+  .then(function(response) {
+    console.log(response);
+    res.status(response.status).json({
+      status: response.body.status,
+      status_detail: response.body.status_detail,
+      id: response.body.id
+    });
+  })
+
   
 } catch (error) {
   res.status(500).json({error})
