@@ -79,15 +79,16 @@ exports.createOrder = async (req, res) => {
 
 
 exports.verify = async (req,res) => {
-  const id = req.query.id
   try {
-    console.log(id);
+    const id = req.query.id
+    console.log("este es el id: " + id);
 
     const paymentStatus = await axios.get(`https://api.mercadopago.com/v1/payments/${id}`, {Authorization:"Bearer APP_USR-4118311813066874-032322-c78f760dfd1e2490d6aeb2776d239e93-659536649"});
     console.log(paymentStatus);
-    res.status(200).json({id: id, payment: paymentStatus})
+    res.status(200)
     
   } catch (error) {
+    console.log({err: error});
     res.status(500).json({error});
   }
 }
