@@ -5,6 +5,7 @@ const axios = require('axios')
 
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
+const { Axios } = require("axios");
 // Agrega credenciales
 mercadopago.configure({
   access_token:
@@ -77,12 +78,19 @@ exports.createOrder = async (req, res) => {
   }
 };
 
+const changeStock = async (id) => {
+  const verify = axios.get(
+    "https://feriahermana-api.herokuapp.com/api/products"
+  );   
+  return verify
+}
+
 
 exports.verify = async (req,res) => {
   try {
     const id = req.query.id
     console.log("este es el id: " + id);
-
+    console.log({axiosTest: changeStock(id)});
 
     res.status(200)
     
