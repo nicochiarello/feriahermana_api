@@ -1,18 +1,17 @@
 const { json } = require("express");
 const Products = require("../models/product");
+const Roles = require("../models/roles");
 
 exports.getAll = async (req, res) => {
-  let { category, sort, name, sale } = req.query;
+  let { category, sort, name, sale, view } = req.query;
   let find = {};
   if (category) {
     find.category = category;
   }
-  if (sale === "true"){
-      
-      find.sale = true
+  if (sale === "true") {
+    find.sale = true;
   }
   if (name) {
-      
     find.name = { $regex: name, $options: "i" };
   }
 
@@ -20,18 +19,24 @@ exports.getAll = async (req, res) => {
     sort = "-createdAt";
   }
 
-  const currentPage = req.query.page || 1
-  const perPage = 12
-  const totalItems = await Products.find(find).countDocuments()
+  if (view) {
+    find.view = view;
+  }
+
+  const currentPage = req.query.page || 1;
+  const perPage = req.query.items;
+  const totalItems = await Products.find(find).countDocuments();
   try {
     const fetchedProducts = await Products.find(find)
       .collation({ locale: "en" })
       .sort(sort)
       .skip((currentPage - 1) * perPage)
-      .limit(perPage)
-    res
-      .status(200)
-      .json({ products: fetchedProducts, nbHits: fetchedProducts.length, totalItems: totalItems });
+      .limit(perPage);
+    res.status(200).json({
+      products: fetchedProducts,
+      nbHits: fetchedProducts.length,
+      totalItems: totalItems,
+    });
   } catch (error) {
     res.status(404).json(error);
   }
@@ -54,6 +59,7 @@ exports.create = async (req, res) => {
       category: req.body.category,
       img: req.file.location,
       size: req.body.size,
+      view: req.body.view,
     });
     if (req.body.sale) {
       product.sale = req.body.sale;
@@ -65,7 +71,6 @@ exports.create = async (req, res) => {
     res.status(200).json({ productCreated: product });
   } catch (error) {
     res.status(400).json(error);
-    console.log(error);
   }
 };
 
@@ -76,9 +81,16 @@ exports.update = async (req, res) => {
       price: req.body.price,
       category: req.body.category,
       size: req.body.size,
+      view: req.body.view,
     };
     if (req.file) {
       edit.img = req.file.location;
+    }
+    if (req.body.sale) {
+      edit.sale = req.body.sale;
+    }
+    if (req.body.discount) {
+      edit.discount = req.body.discount;
     }
     const updatedProduct = await Products.findByIdAndUpdate(
       req.params._id,

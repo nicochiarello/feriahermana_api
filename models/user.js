@@ -13,11 +13,21 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  roles: [
+    {
+      ref: "roles",
+      type: mongoose.Schema.Types.ObjectId,
+    },
+  ],
   direction: {
     type: String,
     required: false,
   },
   mobile: {
+    type: Number,
+    required: false,
+  },
+  zip: {
     type: Number,
     required: false,
   },
@@ -34,7 +44,6 @@ const UserSchema = new mongoose.Schema({
     type: [mongoose.Types.ObjectId],
     ref: "Orders",
     required: false,
-    
   },
 });
 

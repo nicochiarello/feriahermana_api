@@ -25,6 +25,10 @@ const OrderSchema = mongoose.Schema(
     shipping: {
         type: String,
         required: true
+    },
+    payment: {
+      type: String,
+      required: true
     }
   },
   { timestamps: true }

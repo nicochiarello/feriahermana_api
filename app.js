@@ -2,10 +2,15 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const productRoutes = require("./routes/products");
-const userRoutes = require('./routes/users')
-const categoriesRoutes = require('./routes/categories')
-const ordersRoute = require('./routes/orders')
+const userRoutes = require("./routes/users");
+const categoriesRoutes = require("./routes/categories");
+const ordersRoute = require("./routes/orders");
 const cors = require("cors");
+const roles = require("./libs/initialSetup");
+
+//creates roles if not created yet
+roles.createRoles();
+
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
@@ -16,7 +21,7 @@ app.get("/", (req, res) => {
 app.use("/api", productRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/orders", ordersRoute);
-app.use("/api/categories", categoriesRoutes)
+app.use("/api/categories", categoriesRoutes);
 mongoose
   .connect(
     "mongodb+srv://user:gayatry@cluster0.5yfsd.mongodb.net/feriahermana?retryWrites=true&w=majority"

@@ -34,6 +34,15 @@ const ProductSchema = new mongoose.Schema({
     discount: {
         type: Number,
         required: false,
+    },
+    view: {
+        type: Boolean,
+        required: true,
+    },
+    reserved: {
+        type: Boolean,
+        required: false,
+        default: false,
     }
 
 },{timestamps: true})

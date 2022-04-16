@@ -3,6 +3,7 @@ const router = express.Router();
 const userControllers = require("../controllers/users");
 const { body } = require("express-validator");
 const User = require("../models/user");
+const userAuth = require('../middlewares/authUser')
 
 router.post(
   "/signup",
@@ -27,5 +28,11 @@ router.post(
 router.post("/login", userControllers.login)
 
 router.get("/getall", userControllers.getAll)
+
+router.get("/getSingle/:id", userControllers.getSingle)
+
+// router.delete("/delete", userControllers.deleteAll)
+
+router.post("/update/:id",userAuth, userControllers.updateUser)
 
 module.exports = router;
