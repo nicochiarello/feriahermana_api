@@ -10,17 +10,17 @@ router.post(
   [
     body("email")
       .isEmail()
-      .withMessage("Please enter a valid email")
+      .withMessage("Debe ingresar un email valido")
       .custom((value, { req }) => {
         return User.findOne({ email: value }).then((user) => {
           if (user) {
-            return Promise.reject("Email already exists");
+            return Promise.reject("El email ya existe");
           }
         });
       })
       .normalizeEmail(),
-      body('password').trim().isLength({min:5}).withMessage('password must contain a minimun of 5 characters'),
-      body("name").trim().not().isEmpty().withMessage('the field name can´t be empty')
+      body('password').trim().isLength({min:5}).withMessage('La contraseña debe contener un mínimo de 5 caracteres'),
+      body("name").trim().not().isEmpty().withMessage('El campo nombre no puede estar vacío')
   ],
   userControllers.createUser
 );
