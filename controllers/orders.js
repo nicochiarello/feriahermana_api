@@ -165,13 +165,13 @@ exports.deleteSingleOrder = async (req,res) => {
         let product =  await Products.findById(i._id)
         const params = {
           Bucket: "feria-hermana",
-          Key: `${product.img.slice(49)}`,
+          Key: `${product.img.slice(39)}`,
         };
         console.log(params);
         s3.deleteObject(params, (err, data) => {
           console.error(err);
           console.log(data);
-          console.log(product.img.slice(49));
+          console.log(product.img.slice(39));
         });
         await product.delete()
 
