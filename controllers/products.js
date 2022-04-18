@@ -91,26 +91,21 @@ exports.update = async (req, res) => {
       size: req.body.size,
       view: req.body.view,
     };
-    
-
     if (req.file) {
-      
-      // let keyParam = req.body.img.split(".com/")[1];
-      // console.log(keyParam);
-      //     let params = {
-      //       Bucket: "feria-hermana",
-      //       Key: keyParam,
-      //     };
-      //     console.log(params);
-      //     s3.deleteObject(params, (err, data) => {
-      //       console.error(err);
-      //       console.log(data);
-      //       console.log(keyParam);
-      //     });
-          edit.img = req.file.location;
+      edit.img = req.file.location;
+      const img = req.body.img
+      let keyParam = img.split(".com/")[1];
+          const params = {
+            Bucket: "feria-hermana",
+            Key: keyParam,
+          };
+          console.log(params);
+          s3.deleteObject(params, (err, data) => {
+            console.error(err);
+            console.log(data);
+            console.log(keyParam);
+          });
     }
-
-
     if (req.body.sale) {
       edit.sale = req.body.sale;
     }
