@@ -114,7 +114,7 @@ exports.delete = async (req, res) => {
   try {
     const deleteProducts = await Products.findById(req.params.id);
     await s3.deleteObject(
-      { Bucket: "lujan-en-5", Key: deleteProducts.img.slice(46) },
+      { Bucket: "feria-hermana", Key: deleteProducts.img.slice(46) },
       (err, data) => {
         console.error(err);
         console.log(data);
