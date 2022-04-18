@@ -93,15 +93,16 @@ exports.update = async (req, res) => {
     };
     if (req.file) {
       edit.img = req.file.location;
+      const keyParam = edit.img.split(".com/")[1];
           const params = {
             Bucket: "feria-hermana",
-            Key: `${edit.img.slice(49)}`,
+            Key: keyParam,
           };
           console.log(params);
           s3.deleteObject(params, (err, data) => {
             console.error(err);
             console.log(data);
-            console.log(edit.img.slice(49));
+            console.log(keyParam);
           });
     }
     if (req.body.sale) {
