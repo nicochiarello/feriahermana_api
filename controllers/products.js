@@ -93,7 +93,7 @@ exports.update = async (req, res) => {
     };
     if (req.file) {
       
-      const keyParam = edit.img.split(".com/")[1];
+      const keyParam = req.body.img.split(".com/")[1];
           const params = {
             Bucket: "feria-hermana",
             Key: keyParam,
