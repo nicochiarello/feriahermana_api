@@ -4,6 +4,14 @@ const User = require("../models/user");
 const axios = require("axios");
 const Products = require('../models/product')
 
+const aws = require("aws-sdk");
+
+const s3 = new aws.S3({
+  accessKeyId: "AKIA6HK2ZBTX6HAF54SA",
+  secretAccessKey: "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",
+  ACL: "public-read",
+});
+
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
 const { Axios } = require("axios");
@@ -149,10 +157,25 @@ exports.verify = (req, res) => {
 };
 
 
+
 exports.deleteSingleOrder = async (req,res) => {
   try {
     const deleteProducts = async () => {
-      req.body.products.forEach(async (i)=> await Products.findByIdAndDelete(i._id))
+      req.body.products.forEach(async (i)=> {
+        let product =  await Products.findById(i._id)
+        const params = {
+          Bucket: "feria-hermana",
+          Key: `${product.img.slice(49)}`,
+        };
+        console.log(params);
+        s3.deleteObject(params, (err, data) => {
+          console.error(err);
+          console.log(data);
+          console.log(product.img.slice(49));
+        });
+        await product.delete()
+
+      })
     }
     await deleteProducts()
     console.log(req.body);
