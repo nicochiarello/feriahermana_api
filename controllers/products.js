@@ -92,7 +92,7 @@ exports.update = async (req, res) => {
       view: req.body.view,
     };
     if (req.file) {
-      edit.img = req.file.location;
+      
       const keyParam = edit.img.split(".com/")[1];
           const params = {
             Bucket: "feria-hermana",
@@ -104,6 +104,11 @@ exports.update = async (req, res) => {
             console.log(data);
             console.log(keyParam);
           });
+          
+    }
+
+    if(req.file){
+      edit.img = req.file.location;
     }
     if (req.body.sale) {
       edit.sale = req.body.sale;
