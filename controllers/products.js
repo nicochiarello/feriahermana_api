@@ -113,8 +113,8 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const deleteProducts = await Products.findById(req.params.id);
-    await s3.deleteObject(
-      { Bucket: "feria-hermana", Key: deleteProducts.img.slice(46) },
+    s3.deleteObject(
+      { Bucket: "feria-hermana", Key: "1650311032635226312-500-auto.webp" },
       (err, data) => {
         console.error(err);
         console.log(data);
