@@ -118,7 +118,7 @@ exports.delete = async (req, res) => {
       (err, data) => {
         console.error(err);
         console.log(data);
-        console.log(deleteProducts.img.slice(46));
+        console.log(deleteProducts.img.slice(39));
       }
     );
     await deleteProducts.delete()
