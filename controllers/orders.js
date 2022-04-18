@@ -11,7 +11,7 @@ const orders = require("../models/orders");
 // Agrega credenciales
 mercadopago.configure({
   access_token:
-    "TEST-4118311813066874-032322-792fbd5a35ee362bd406466a107faae5-659536649",
+    "APP_USR-5151941510199624-041814-2be53e0631790c1fbd0298471517be3d-223096958",
 });
 
 exports.delete = async (req, res) => {
