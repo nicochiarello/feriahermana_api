@@ -1,6 +1,14 @@
 const { json } = require("express");
 const Products = require("../models/product");
 const Roles = require("../models/roles");
+const aws = require('aws-sdk')
+
+
+const s3 = new aws.S3({
+  accessKeyId: "AKIA6HK2ZBTX6HAF54SA",
+  secretAccessKey: "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",
+  ACL: "public-read",
+});
 
 exports.getAll = async (req, res) => {
   let { category, sort, name, sale, view } = req.query;
@@ -104,7 +112,16 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    const deleteProducts = await Products.findByIdAndDelete(req.params.id);
+    const deleteProducts = await Products.findById(req.params.id);
+    await s3.deleteObject(
+      { Bucket: "lujan-en-5", Key: deleteProducts.img.slice(46) },
+      (err, data) => {
+        console.error(err);
+        console.log(data);
+        console.log(deleteProducts.img.slice(46));
+      }
+    );
+    await deleteProducts.delete()
     res
       .status(200)
       .json({ msg: `product ${req.params.id} deleted succesfully` });

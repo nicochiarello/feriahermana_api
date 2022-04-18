@@ -30,7 +30,7 @@ exports.createUser = async (req, res) => {
       const token = await jwt.sign(
         { email: create.email, userId: create._id.toString(), userRoles: user.roles },
         "feriahermanaAPI2425",
-        { expiresIn: "1h" }
+        { expiresIn: "3d" }
       );
       res.status(200).json({ msg: "user created", user: create, token, roles:user.roles });
     } catch (error) {
