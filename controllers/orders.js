@@ -2,7 +2,7 @@ const Order = require("../models/orders");
 const mongoose = require("mongoose");
 const User = require("../models/user");
 const axios = require("axios");
-const Products = require('../models/product')
+const Products = require("../models/product");
 
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
@@ -44,7 +44,6 @@ exports.createOrder = async (req, res) => {
       shippingPrice: req.body.shippingPrice,
       mobile: req.body.mobile,
       payment: req.body.shipping,
- 
     };
     console.log(orderReceived);
     let mpPreference = {
@@ -52,10 +51,9 @@ exports.createOrder = async (req, res) => {
       back_urls: {
         failure: "",
         pending: "",
-        success:
-          `http://localhost:3000/verify/true?payment=mercadopago&direction=${orderReceived.shipping}`,
+        success: `http://localhost:3000/verify/true?payment=mercadopago&direction=${orderReceived.shipping}`,
       },
-      auto_return: "approved"
+      auto_return: "approved",
       // notification_url:
       //   "https://feriahermana-api.herokuapp.com/api/orders/verify?source_news=ipn",
     };
@@ -75,13 +73,13 @@ exports.createOrder = async (req, res) => {
     });
 
     const order = await new Order(orderReceived);
-  
+
     const updateUser = await User.findByIdAndUpdate(req.body.author, {
       mobile: req.body.mobile,
       direction: req.body.directionUser,
       dni: req.body.dni,
       name: req.body.name,
-      zip: req.body.zip
+      zip: req.body.zip,
     });
     const updateOrder = await User.findById(req.body.author);
 
@@ -89,11 +87,29 @@ exports.createOrder = async (req, res) => {
     await updateOrder.save();
     await order.save();
     await order.populate("author");
-    const updateProducts = () => {
-      orderReceived.products.forEach(async (i)=> await Products.findByIdAndUpdate(i._id, {view: false, reserved: true}))
-    } 
 
-    await updateProducts()
+    const checkStock = () => {
+      orderReceived.products.forEach(async (i) => {
+        let product = await Products.findById;
+        if(product.reserved === true){
+          throw new Error(`El producto ${product.name} no tiene disponibilidad`); 
+        }
+      });
+    };
+
+    await checkStock()
+
+    const updateProducts = () => {
+      orderReceived.products.forEach(
+        async (i) =>
+          await Products.findByIdAndUpdate(i._id, {
+            view: false,
+            reserved: true,
+          })
+      );
+    };
+
+    await updateProducts();
     if (req.body.shipping === "Mercado pago") {
       const responseMP = await mercadopago.preferences.create(mpPreference);
       res.status(200).json({
@@ -115,8 +131,6 @@ exports.createOrder = async (req, res) => {
 
 exports.verify = (req, res) => {
   try {
-
-
     var payment_data = {
       transaction_amount: Number(req.body.transactionAmount),
       token: req.body.token,
@@ -148,18 +162,19 @@ exports.verify = (req, res) => {
   }
 };
 
-
-exports.deleteSingleOrder = async (req,res) => {
+exports.deleteSingleOrder = async (req, res) => {
   try {
     const deleteProducts = async () => {
-      req.body.products.forEach(async (i)=> await Products.findByIdAndDelete(i._id))
-    }
-    await deleteProducts()
+      req.body.products.forEach(
+        async (i) => await Products.findByIdAndDelete(i._id)
+      );
+    };
+    await deleteProducts();
     console.log(req.body);
-    const deleteOrder = await Order.findByIdAndDelete(req.params.id)
-    res.status(200).json("Order and products deleted")
+    const deleteOrder = await Order.findByIdAndDelete(req.params.id);
+    res.status(200).json("Order and products deleted");
   } catch (error) {
     console.log(error);
-    res.status(400).json({error})
+    res.status(400).json({ error });
   }
-}
+};
