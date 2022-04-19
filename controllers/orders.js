@@ -45,7 +45,20 @@ exports.createOrder = async (req, res) => {
       mobile: req.body.mobile,
       payment: req.body.shipping,
     };
-    console.log(orderReceived);
+
+    const checkStock = () => {
+      orderReceived.products.forEach(async (i) => {
+        let product = await Products.findById(i._id);
+        if (product.reserved === true) {
+          throw new EvalError(
+            `El producto ${product.name} no tiene disponibilidad`
+          );
+        }
+      });
+    };
+
+    await checkStock();
+
     let mpPreference = {
       items: [],
       back_urls: {
@@ -87,17 +100,6 @@ exports.createOrder = async (req, res) => {
     await updateOrder.save();
     await order.save();
     await order.populate("author");
-
-    const checkStock = () => {
-      orderReceived.products.forEach(async (i) => {
-        let product = await Products.findById(i._id);
-        if(product.reserved === true){
-          throw Error(`El producto ${product.name} no tiene disponibilidad`); 
-        }
-      });
-    };
-
-    await checkStock()
 
     const updateProducts = () => {
       orderReceived.products.forEach(
