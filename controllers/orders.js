@@ -90,7 +90,7 @@ exports.createOrder = async (req, res) => {
 
     const checkStock = () => {
       orderReceived.products.forEach(async (i) => {
-        let product = await Products.findById;
+        let product = await Products.findById(i._id);
         if(product.reserved === true){
           throw new Error(`El producto ${product.name} no tiene disponibilidad`); 
         }
