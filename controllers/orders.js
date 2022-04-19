@@ -46,19 +46,30 @@ exports.createOrder = async (req, res) => {
       payment: req.body.shipping,
     };
 
-    
-    // const checkStock = () => {
-    //   orderReceived.products.forEach(async (i) => {
-    //     let product = await Products.findById(i._id);
-    //     if (product.reserved === true) {
-    //       throw new EvalError(
-    //         `El producto ${product.name} no tiene disponibilidad`
-    //       );
-    //     }
-    //   });
-    // };
+    const products = [];
+    await orderReceived.products.forEach((i) => {
+      products.push(i);
+    });
 
-    // await checkStock();
+    const checkStock = () => {
+      products.forEach((i) => {
+        if (i.reserved === true) {
+          throw new Error("stock");
+        }
+      });
+    };
+    checkStock();
+
+    // await orderReceived.products.forEach(async (i) => {
+    //   const product = await Products.findById(i._id);
+    //   try {
+    //     if (product.reserved === true) {
+    //       throw new Error("error nuevo");
+    //     }
+    //   } catch (error) {
+    //     throw new Error(error);
+    //   }
+    // });
 
     let mpPreference = {
       items: [],
@@ -127,8 +138,7 @@ exports.createOrder = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: error });
+    res.status(500).json(error.message);
   }
 };
 
@@ -178,6 +188,6 @@ exports.deleteSingleOrder = async (req, res) => {
     res.status(200).json("Order and products deleted");
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error });
+    res.status(400).json(error);
   }
 };
