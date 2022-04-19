@@ -46,14 +46,19 @@ exports.createOrder = async (req, res) => {
       payment: req.body.shipping,
     };
 
-    orderReceived.products.forEach(async (i) => {
-      let product = await Products.findById(i._id);
-      if (product.reserved === true) {
-        throw new EvalError(
-          `El producto ${product.name} no tiene disponibilidad`
-        );
-      }
-    });
+    
+    // const checkStock = () => {
+    //   orderReceived.products.forEach(async (i) => {
+    //     let product = await Products.findById(i._id);
+    //     if (product.reserved === true) {
+    //       throw new EvalError(
+    //         `El producto ${product.name} no tiene disponibilidad`
+    //       );
+    //     }
+    //   });
+    // };
+
+    // await checkStock();
 
     let mpPreference = {
       items: [],
