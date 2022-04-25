@@ -7,7 +7,7 @@ const authUser = require('../middlewares/authUser')
 router.get("/getall", orderRoutes.getAll)
 router.post("/create",authUser, orderRoutes.createOrder)
 // router.post("/verify", orderRoutes.verify)
-// router.delete("/delete",auth, orderRoutes.delete)
+// router.delete("/delete", orderRoutes.delete)
 router.post("/deleteSingle/:id",auth, orderRoutes.deleteSingleOrder)
 
 module.exports = router

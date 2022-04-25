@@ -58,18 +58,8 @@ exports.createOrder = async (req, res) => {
         }
       });
     };
-    checkStock();
+    await checkStock();
 
-    // await orderReceived.products.forEach(async (i) => {
-    //   const product = await Products.findById(i._id);
-    //   try {
-    //     if (product.reserved === true) {
-    //       throw new Error("error nuevo");
-    //     }
-    //   } catch (error) {
-    //     throw new Error(error);
-    //   }
-    // });
 
     let mpPreference = {
       items: [],
