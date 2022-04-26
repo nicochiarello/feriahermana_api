@@ -83,10 +83,9 @@ exports.createOrder = async (req, res) => {
       back_urls: {
         failure: "",
         pending: "",
-        success: `http://localhost:3000/verify/true?payment=mercadopago&direction=${orderReceived.shipping}`,
+        success: `http://feriahermana.com/verify/true?payment=mercadopago&direction=${orderReceived.shipping}`,
       },
       auto_return: "approved",
-
     };
 
     orderReceived.products.map((i) =>
