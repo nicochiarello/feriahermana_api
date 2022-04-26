@@ -14,14 +14,7 @@ const OrderSchema = mongoose.Schema(
       ref: "Users",
       required: true,
     },
-    direction: {
-      type: String,
-      required: true,
-    },
-    zip: {
-      type: String,
-      required: false,
-    },
+
     shipping: {
         type: String,
         required: true
