@@ -9,6 +9,12 @@ exports.createUser = async (req, res) => {
   if (!errors.isEmpty()) {
     res.status(400).json(errors);
   } else {
+    const userExists = await User.findOne({ email: req.body.email })
+    if(userExists){
+      res.status(400).json({ msg: "El email ya existe" });
+      return
+    }
+
 
     const roles = req.body.roles;
     try {
