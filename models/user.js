@@ -19,15 +19,7 @@ const UserSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
     },
   ],
-  direction: {
-    type: String,
-    required: false,
-  },
   mobile: {
-    type: Number,
-    required: false,
-  },
-  zip: {
     type: Number,
     required: false,
   },

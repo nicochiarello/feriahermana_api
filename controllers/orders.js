@@ -8,6 +8,7 @@ const Products = require("../models/product");
 const mercadopago = require("mercadopago");
 const { Axios } = require("axios");
 const orders = require("../models/orders");
+const product = require("../models/product");
 // Agrega credenciales
 mercadopago.configure({
   access_token:
@@ -33,32 +34,48 @@ exports.getAll = async (req, res) => {
   }
 };
 
+
+
+const throwError = () => {
+  throw new Error("prueba desde throwError")
+}
+
+const getProducts = async (data) => {
+
+  const products = []
+  for(const element of data){
+    const productReceived = await Products.findById(element._id)
+    if(productReceived.reserved === true){
+      return true
+    }
+
+  }
+  
+ return products
+  
+}
+
 exports.createOrder = async (req, res) => {
+
+
   try {
+      const stock = await getProducts(req.body.products);
+
+      if (stock === true) {
+          throw new Error("stock");
+      }
+
+ 
     const orderReceived = {
       products: req.body.products,
       author: req.body.author,
       total: req.body.total,
-      direction: req.body.directionUser,
       shipping: req.body.directionShipping,
       shippingPrice: req.body.shippingPrice,
       mobile: req.body.mobile,
       payment: req.body.shipping,
     };
 
-    const products = [];
-    await orderReceived.products.forEach((i) => {
-      products.push(i);
-    });
-
-    const checkStock = () => {
-      products.forEach((i) => {
-        if (i.reserved === true) {
-          throw new Error("stock");
-        }
-      });
-    };
-    await checkStock();
 
 
     let mpPreference = {
@@ -69,8 +86,7 @@ exports.createOrder = async (req, res) => {
         success: `http://localhost:3000/verify/true?payment=mercadopago&direction=${orderReceived.shipping}`,
       },
       auto_return: "approved",
-      // notification_url:
-      //   "https://feriahermana-api.herokuapp.com/api/orders/verify?source_news=ipn",
+
     };
 
     orderReceived.products.map((i) =>
@@ -91,10 +107,8 @@ exports.createOrder = async (req, res) => {
 
     const updateUser = await User.findByIdAndUpdate(req.body.author, {
       mobile: req.body.mobile,
-      direction: req.body.directionUser,
       dni: req.body.dni,
       name: req.body.name,
-      zip: req.body.zip,
     });
     const updateOrder = await User.findById(req.body.author);
 
@@ -128,6 +142,7 @@ exports.createOrder = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json(error.message);
   }
 };
