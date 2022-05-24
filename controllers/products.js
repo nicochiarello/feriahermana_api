@@ -1,14 +1,8 @@
 const { json } = require("express");
 const Products = require("../models/product");
 const Roles = require("../models/roles");
-const aws = require('aws-sdk')
 
-
-const s3 = new aws.S3({
-  accessKeyId: "AKIA6HK2ZBTX6HAF54SA",
-  secretAccessKey: "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",
-  ACL: "public-read",
-});
+const cloudinary = require("../utils/cloudinary");
 
 exports.getAll = async (req, res) => {
   let { category, sort, name, sale, view } = req.query;
@@ -65,15 +59,29 @@ exports.create = async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       category: req.body.category,
-      img: req.file.location,
       size: req.body.size,
       view: req.body.view,
     });
+    const path = [];
+    const uploadImg = async () => {
+      for (const file of req.files) {
+        let url = await cloudinary.v2.uploader.upload(file.path);
+        path.push({ secureUrl: url.secure_url, publicId: url.public_id });
+        console.log(path);
+      }
+    };
+
+    await uploadImg();
+    product.images = path;
+
     if (req.body.sale) {
       product.sale = req.body.sale;
     }
     if (req.body.discount) {
       product.discount = req.body.discount;
+    }
+    if (req.body.description) {
+      product.description = req.body.description;
     }
     await product.save();
     res.status(200).json({ productCreated: product });
@@ -84,55 +92,83 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const edit = {
-      name: req.body.name,
-      price: req.body.price,
-      category: req.body.category,
-      size: req.body.size,
-      view: req.body.view,
-      oldImg: req.body.img
+    console.log({ files: req.files });
+    console.log({body: req.body})
+    const product = await Products.findById(req.params._id);
+    const oldImages = JSON.parse(req.body.oldImages);
+
+
+    const uploadImages = async () => {
+      let iterator = 0;
+      let i = 0
+      let aux = [];
+      for (let img of oldImages) {
+        if (img.secureUrl) {
+          aux.push(img);
+       
+        } else {
+          
+          let url = await cloudinary.v2.uploader.upload(
+            req.files[iterator].path
+          );
+          aux.push({
+            secureUrl: url.secure_url,
+            publicId: url.public_id,
+          });
+        
+          iterator = iterator + 1;
+        }
+      }
+      return (product.images = aux);
     };
-    if (req.file) {
-      edit.img = req.file.location;
+
+    product.name = req.body.name;
+    product.price = req.body.price;
+    product.category = req.body.category;
+    product.size = req.body.size;
+    product.view = req.body.view;
+    product.description = req.body.description;
+    if (req.files) {
+      await uploadImages();
     }
+
     if (req.body.sale) {
-      edit.sale = req.body.sale;
+      product.sale = req.body.sale;
     }
     if (req.body.discount) {
-      edit.discount = req.body.discount;
+      product.discount = req.body.discount;
     }
-    const updatedProduct = await Products.findByIdAndUpdate(
-      req.params._id,
-      edit
-    );
-    res.status(202).json({ status: "ok", productUpdated: updatedProduct });
+    const saveProduct = await product.save();
+    res.status(202).json({ status: "ok", productUpdated: saveProduct });
   } catch (error) {
-    res.status(400).json({ msg: error });
+    console.log(error)
+    res.status(400).json(error);
   }
 };
 
 exports.delete = async (req, res) => {
   try {
-    const deleteProducts = await Products.findById(req.params.id);
-    const keyParam = deleteProducts.img.split(".com/")[1]
-    const params = {
-      Bucket: "feria-hermana",
-      Key: keyParam,
-    };
-    console.log(params);
-    s3.deleteObject(
-      params,
-      (err, data) => {
-        console.error(err);
-        console.log(data);
-        console.log(keyParam);
-      }
-    );
-    await deleteProducts.delete()
+    const product = await Products.findById(req.params.id);
+    for (let img of product.images) {
+      cloudinary.v2.uploader.destroy(img.publicId, function (error, result) {
+        console.log(result, error);
+      });
+    }
+
+    await product.delete();
     res
       .status(200)
       .json({ msg: `product ${req.params.id} deleted succesfully` });
   } catch (error) {
-    json.status(404).json({ msg: "failed to delete" });
+    res.status(404).json({ msg: "failed to delete" });
+  }
+};
+
+exports.deleteAll = async (req, res) => {
+  try {
+    const deleteAll = await Products.deleteMany({});
+    res.status(200).json("deleted");
+  } catch (error) {
+    res.status(400).json({ error });
   }
 };

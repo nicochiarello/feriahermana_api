@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const User = require("../models/user");
 const axios = require("axios");
 const Products = require("../models/product");
-
+const cloudinary = require('../utils/cloudinary')
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
 const { Axios } = require("axios");
@@ -183,7 +183,17 @@ exports.deleteSingleOrder = async (req, res) => {
   try {
     const deleteProducts = async () => {
       req.body.products.forEach(
-        async (i) => await Products.findByIdAndDelete(i._id)
+        async (i) => {
+          for(let image of i.images){
+            await cloudinary.v2.uploader.destroy(
+              image.publicId,
+              function (error, result) {
+                console.log(result, error);
+              }
+            );
+          }
+          await Products.findByIdAndDelete(i._id)
+        } 
       );
     };
     await deleteProducts();
