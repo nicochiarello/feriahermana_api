@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const User = require("../models/user");
 const axios = require("axios");
 const Products = require("../models/product");
-const cloudinary = require('../utils/cloudinary')
+const cloudinary = require("../utils/cloudinary");
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
 const { Axios } = require("axios");
@@ -34,38 +34,30 @@ exports.getAll = async (req, res) => {
   }
 };
 
-
-
 const throwError = () => {
-  throw new Error("prueba desde throwError")
-}
+  throw new Error("prueba desde throwError");
+};
 
 const getProducts = async (data) => {
-
-  const products = []
-  for(const element of data){
-    const productReceived = await Products.findById(element._id)
-    if(productReceived.reserved === true){
-      return true
+  const products = [];
+  for (const element of data) {
+    const productReceived = await Products.findById(element._id);
+    if (productReceived.reserved === true) {
+      return true;
     }
-
   }
-  
- return products
-  
-}
+
+  return products;
+};
 
 exports.createOrder = async (req, res) => {
-
-
   try {
-      const stock = await getProducts(req.body.products);
+    const stock = await getProducts(req.body.products);
 
-      if (stock === true) {
-          throw new Error("stock");
-      }
+    if (stock === true) {
+      throw new Error("stock");
+    }
 
- 
     const orderReceived = {
       products: req.body.products,
       author: req.body.author,
@@ -75,8 +67,6 @@ exports.createOrder = async (req, res) => {
       mobile: req.body.mobile,
       payment: req.body.shipping,
     };
-
-
 
     let mpPreference = {
       items: [],
@@ -182,9 +172,9 @@ exports.verify = (req, res) => {
 exports.deleteSingleOrder = async (req, res) => {
   try {
     const deleteProducts = async () => {
-      req.body.products.forEach(
-        async (i) => {
-          for(let image of i.images){
+      req.body.products.forEach(async (i) => {
+        if (i.images) {
+          for (let image of i.images) {
             await cloudinary.v2.uploader.destroy(
               image.publicId,
               function (error, result) {
@@ -192,9 +182,9 @@ exports.deleteSingleOrder = async (req, res) => {
               }
             );
           }
-          await Products.findByIdAndDelete(i._id)
-        } 
-      );
+        }
+        await Products.findByIdAndDelete(i._id);
+      });
     };
     await deleteProducts();
     console.log(req.body);
