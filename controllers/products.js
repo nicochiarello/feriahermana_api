@@ -93,21 +93,18 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     console.log({ files: req.files });
-    console.log({body: req.body})
+    console.log({ body: req.body });
     const product = await Products.findById(req.params._id);
     const oldImages = JSON.parse(req.body.oldImages);
 
-
     const uploadImages = async () => {
       let iterator = 0;
-      let i = 0
+      let i = 0;
       let aux = [];
       for (let img of oldImages) {
         if (img.secureUrl) {
           aux.push(img);
-       
         } else {
-          
           let url = await cloudinary.v2.uploader.upload(
             req.files[iterator].path
           );
@@ -115,7 +112,7 @@ exports.update = async (req, res) => {
             secureUrl: url.secure_url,
             publicId: url.public_id,
           });
-        
+
           iterator = iterator + 1;
         }
       }
@@ -141,7 +138,7 @@ exports.update = async (req, res) => {
     const saveProduct = await product.save();
     res.status(202).json({ status: "ok", productUpdated: saveProduct });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(400).json(error);
   }
 };
@@ -149,10 +146,12 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const product = await Products.findById(req.params.id);
-    for (let img of product.images) {
-      cloudinary.v2.uploader.destroy(img.publicId, function (error, result) {
-        console.log(result, error);
-      });
+    if (product.images) {
+      for (let img of product.images) {
+        cloudinary.v2.uploader.destroy(img.publicId, function (error, result) {
+          console.log(result, error);
+        });
+      }
     }
 
     await product.delete();
