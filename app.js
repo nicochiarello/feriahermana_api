@@ -24,7 +24,7 @@ app.use("/api/orders", ordersRoute);
 app.use("/api/categories", categoriesRoutes);
 mongoose
   .connect(
-    "mongodb+srv://user:gayatry@cluster0.5yfsd.mongodb.net/feriahermana?retryWrites=true&w=majority"
+    "mongodb+srv://user:gayatry@cluster0.5yfsd.mongodb.net/test?retryWrites=true&w=majority"
   )
   .then(() => console.log("db connected"))
   .catch((err) => console.log(err));

@@ -1,7 +1,7 @@
 const { json } = require("express");
 const Products = require("../models/product");
 const Roles = require("../models/roles");
-
+const { s3 } = require("../middlewares/upload");
 const cloudinary = require("../utils/cloudinary");
 
 exports.getAll = async (req, res) => {
@@ -65,9 +65,7 @@ exports.create = async (req, res) => {
     const path = [];
     const uploadImg = async () => {
       for (const file of req.files) {
-        let url = await cloudinary.v2.uploader.upload(file.path);
-        path.push({ secureUrl: url.secure_url, publicId: url.public_id });
-        console.log(path);
+        path.push({ secureUrl: file.location, publicId: file.key });
       }
     };
 
@@ -92,8 +90,6 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    console.log({ files: req.files });
-    console.log({ body: req.body });
     const product = await Products.findById(req.params._id);
     const oldImages = JSON.parse(req.body.oldImages);
 
@@ -105,12 +101,9 @@ exports.update = async (req, res) => {
         if (img.secureUrl) {
           aux.push(img);
         } else {
-          let url = await cloudinary.v2.uploader.upload(
-            req.files[iterator].path
-          );
           aux.push({
-            secureUrl: url.secure_url,
-            publicId: url.public_id,
+            secureUrl: req.files[iterator].location,
+            publicId: req.files[iterator].key,
           });
 
           iterator = iterator + 1;
@@ -148,9 +141,18 @@ exports.delete = async (req, res) => {
     const product = await Products.findById(req.params.id);
     if (product.images) {
       for (let img of product.images) {
-        cloudinary.v2.uploader.destroy(img.publicId, function (error, result) {
-          console.log(result, error);
-        });
+        await s3.deleteObject(
+          { Bucket: "feria-hermana", key: img.publicId },
+          (err, data) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log(data);
+          }
+        );
+        // cloudinary.v2.uploader.destroy(img.publicId, function (error, result) {
+        //   console.log(result, error);
+        // });
       }
     }
 

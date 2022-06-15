@@ -21,3 +21,5 @@ exports.upload = multer({
     },
   }),
 });
+
+exports.s3 = s3
