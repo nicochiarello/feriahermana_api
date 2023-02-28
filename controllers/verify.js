@@ -24,6 +24,7 @@ exports.verifyOrderStatus = async (req, res) => {
   //         return res.status(200).json({oki: "doki"})
   //       }
   //     });
+  console.log(req)
   return res.status(200).json({ oki: "doki" });
 };
 
