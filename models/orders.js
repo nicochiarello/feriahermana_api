@@ -24,7 +24,7 @@ const OrderSchema = mongoose.Schema(
       required: true
     },
     state: {
-      type: Boolean,
+      type: Number,
       default: 0
       // 0 process
       // 1 approved
