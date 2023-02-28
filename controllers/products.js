@@ -1,9 +1,7 @@
 const { json } = require("express");
 const Products = require("../models/product");
-const Roles = require("../models/roles");
-const { s3 } = require("../middlewares/upload");
-const cloudinary = require("../utils/cloudinary");
-const { ChimeSDKMessaging } = require("aws-sdk");
+
+
 
 exports.getAll = async (req, res) => {
   let { sort } = req.query;

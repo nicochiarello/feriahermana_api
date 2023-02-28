@@ -1,7 +1,6 @@
 const Order = require("../models/orders");
 const User = require("../models/user");
 const Products = require("../models/product");
-const cloudinary = require("../utils/cloudinary");
 const { checkStock } = require("../utils/checkStock");
 const { mpPreference } = require("../utils/mpPreference");
 const { updateProductStatus } = require("../utils/updateProductStatus");
@@ -124,24 +123,24 @@ exports.verify = (req, res) => {
 
 exports.deleteSingleOrder = async (req, res) => {
   try {
-    const deleteProducts = async () => {
-      req.body.products.forEach(async (i) => {
-        if (i.images) {
-          for (let image of i.images) {
-            await cloudinary.v2.uploader.destroy(
-              image.publicId,
-              function (error, result) {
-                console.log(result, error);
-              }
-            );
-          }
-        }
-        await Products.findByIdAndDelete(i._id);
-      });
-    };
-    await deleteProducts();
-    console.log(req.body);
-    const deleteOrder = await Order.findByIdAndDelete(req.params.id);
+    // const deleteProducts = async () => {
+    //   req.body.products.forEach(async (i) => {
+    //     if (i.images) {
+    //       for (let image of i.images) {
+    //         await cloudinary.v2.uploader.destroy(
+    //           image.publicId,
+    //           function (error, result) {
+    //             console.log(result, error);
+    //           }
+    //         );
+    //       }
+    //     }
+    //     await Products.findByIdAndDelete(i._id);
+    //   });
+    // };
+    // await deleteProducts();
+    // console.log(req.body);
+    // const deleteOrder = await Order.findByIdAndDelete(req.params.id);
     res.status(200).json("Order and products deleted");
   } catch (error) {
     console.log(error);
