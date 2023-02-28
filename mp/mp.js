@@ -2,8 +2,7 @@
 const mercadopago = require("mercadopago");
 // Agrega credenciales
 mercadopago.configure({
-  access_token:
-    "TEST-4118311813066874-032322-792fbd5a35ee362bd406466a107faae5-659536649",
+  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
 });
 
 app.post("/verify", async (req, res) => {
@@ -36,7 +35,5 @@ app.post("/pay", async (req, res) => {
     const response = await mercadopago.preferences.create(preference);
     const preferenceId = response.body.id;
     res.status(200).json(response);
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 });

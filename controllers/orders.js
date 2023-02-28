@@ -25,7 +25,7 @@ exports.delete = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const getAll = await Order.find({}).sort("-createdAt").populate("author");
+    const getAll = await Order.find();
 
     res.status(200).json({ orders: getAll });
   } catch (error) {
@@ -54,7 +54,7 @@ exports.createOrder = async (req, res) => {
 
     let createdMpPreference = await mpPreference(orderReceived);
 
-    let order = await new Order(orderReceived);
+    let order = await new Order({...orderReceived, shipping: "test"});
 
     let user = await User.findByIdAndUpdate(req.userId, {
       mobile: req.body.mobile,
@@ -66,6 +66,7 @@ exports.createOrder = async (req, res) => {
     // await order.populate("author");
 
     await updateProductStatus(orderReceived);
+    await order.save()
 
     if (req.body.shipping === "Mercado pago") {
       const responseMP = await mercadopago.preferences.create(
