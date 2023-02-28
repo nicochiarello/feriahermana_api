@@ -14,6 +14,9 @@ exports.mpPreference = async (order) => {
       success: `feriahermana.com/verify/true?payment=mercadopago&direction=${order.shipping}`,
     },
     auto_return: "approved",
+    metadata: {
+      orderId: order._id
+    }
   };
 
   preference.items.push({

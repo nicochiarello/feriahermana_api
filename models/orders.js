@@ -22,6 +22,11 @@ const OrderSchema = mongoose.Schema(
     payment: {
       type: String,
       required: true
+    },
+    state: {
+      type: Boolean
+      // 0 process
+      // 1 approved
     }
   },
   { timestamps: true }

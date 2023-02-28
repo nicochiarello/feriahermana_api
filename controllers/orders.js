@@ -5,14 +5,14 @@ const cloudinary = require("../utils/cloudinary");
 const { checkStock } = require("../utils/checkStock");
 const { mpPreference } = require("../utils/mpPreference");
 const { updateProductStatus } = require("../utils/updateProductStatus");
+require("dotenv").config();
 
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
 
 // Agrega credenciales
 mercadopago.configure({
-  access_token:
-    "APP_USR-5151941510199624-041814-2be53e0631790c1fbd0298471517be3d-223096958",
+  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
 });
 
 exports.delete = async (req, res) => {
@@ -53,24 +53,26 @@ exports.createOrder = async (req, res) => {
       payment: req.body.shipping,
     };
 
-    let createdMpPreference = await mpPreference(orderReceived)
+    let createdMpPreference = await mpPreference(orderReceived);
 
     let order = await new Order(orderReceived);
 
-    let user = await User.findByIdAndUpdate(req.userId, {  mobile: req.body.mobile,
+    let user = await User.findByIdAndUpdate(req.userId, {
+      mobile: req.body.mobile,
       dni: req.body.dni,
-      name: req.body.name,});
+      name: req.body.name,
+    });
 
-    user.orders = [...user.orders, order._id],
-  
-
-    await user.save();
+    (user.orders = [...user.orders, order._id]), await user.save();
     // await order.populate("author");
 
     await updateProductStatus(orderReceived);
 
     if (req.body.shipping === "Mercado pago") {
-      const responseMP = await mercadopago.preferences.create(createdMpPreference);
+      const responseMP = await mercadopago.preferences.create(
+        createdMpPreference
+      );
+      console.log(responseMP);
       res.status(200).json({
         msg: "Order Created",
         order: order,
