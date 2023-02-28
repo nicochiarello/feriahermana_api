@@ -1,6 +1,7 @@
 const Products = require("../models/product");
 
-exports.mpPreference = async (order) => {
+exports.mpPreference = async (order, orderId) => {
+  console.log(order)
   let items = [];
   for (let product of order.products) {
     let item = await Products.findById(product);
@@ -15,7 +16,7 @@ exports.mpPreference = async (order) => {
     },
     auto_return: "approved",
     metadata: {
-      orderId: order._id
+      orderId: orderId,
     }
   };
 

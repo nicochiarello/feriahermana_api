@@ -52,9 +52,9 @@ exports.createOrder = async (req, res) => {
       payment: req.body.shipping,
     };
 
-    let createdMpPreference = await mpPreference(orderReceived);
-
     let order = await new Order({...orderReceived, shipping: "test"});
+    let createdMpPreference = await mpPreference(orderReceived, order._id);
+
 
     let user = await User.findByIdAndUpdate(req.userId, {
       mobile: req.body.mobile,
@@ -72,7 +72,10 @@ exports.createOrder = async (req, res) => {
       const responseMP = await mercadopago.preferences.create(
         createdMpPreference
       );
-      console.log(responseMP);
+
+      console.log(responseMP)
+
+
       res.status(200).json({
         msg: "Order Created",
         order: order,
