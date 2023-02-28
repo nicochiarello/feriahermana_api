@@ -3,6 +3,7 @@ const Order = require("../models/orders");
 
 exports.verifyOrderStatus = async (req, res) => {
   // El id estara en req.body.data.id
+  console.log(req.body)
     let mp_id = req.body.data.id;
     axios
       .get(`https://api.mercadopago.com/v1/payments/${mp_id}`, {
@@ -24,8 +25,7 @@ exports.verifyOrderStatus = async (req, res) => {
           return res.status(200).json({oki: "doki"})
         }
       });
-  console.log(req.body)
   return res.status(200).json({ oki: "doki" });
 };
 
-exports.test = () => {};
+
