@@ -1,14 +1,14 @@
 const Order = require("../models/orders");
-const mongoose = require("mongoose");
 const User = require("../models/user");
-const axios = require("axios");
 const Products = require("../models/product");
 const cloudinary = require("../utils/cloudinary");
+const { checkStock } = require("../utils/checkStock");
+const { mpPreference } = require("../utils/mpPreference");
+const { updateProductStatus } = require("../utils/updateProductStatus");
+
 // SDK de Mercado Pago
 const mercadopago = require("mercadopago");
-const { Axios } = require("axios");
-const orders = require("../models/orders");
-const product = require("../models/product");
+
 // Agrega credenciales
 mercadopago.configure({
   access_token:
@@ -17,7 +17,7 @@ mercadopago.configure({
 
 exports.delete = async (req, res) => {
   try {
-    const deleteAll = await Order.deleteMany({});
+    await Order.deleteMany({});
     res.status(200).json("all orders were deleted");
   } catch (error) {
     res.status(400);
@@ -34,33 +34,18 @@ exports.getAll = async (req, res) => {
   }
 };
 
-const throwError = () => {
-  throw new Error("prueba desde throwError");
-};
-
-const getProducts = async (data) => {
-  const products = [];
-  for (const element of data) {
-    const productReceived = await Products.findById(element._id);
-    if (productReceived.reserved === true) {
-      return true;
-    }
-  }
-
-  return products;
-};
-
 exports.createOrder = async (req, res) => {
   try {
-    const stock = await getProducts(req.body.products);
+    // Checks if some of the products are already reserved
+    const stock = await checkStock(req.body.products);
 
-    if (stock === true) {
+    if (!stock) {
       throw new Error("stock");
     }
 
     const orderReceived = {
       products: req.body.products,
-      author: req.body.author,
+      author: req.userId,
       total: req.body.total,
       shipping: req.body.directionShipping,
       shippingPrice: req.body.shippingPrice,
@@ -68,70 +53,36 @@ exports.createOrder = async (req, res) => {
       payment: req.body.shipping,
     };
 
-    let mpPreference = {
-      items: [],
-      back_urls: {
-        failure: "",
-        pending: "",
-        success: `http://feriahermana.com/verify/true?payment=mercadopago&direction=${orderReceived.shipping}`,
-      },
-      auto_return: "approved",
-    };
+    let createdMpPreference = await mpPreference(orderReceived)
 
-    orderReceived.products.map((i) =>
-      mpPreference.items.push({
-        title: i.name,
-        unit_price: i.price,
-        quantity: 1,
-      })
-    );
+    let order = await new Order(orderReceived);
 
-    mpPreference.items.push({
-      title: "Envío",
-      unit_price: orderReceived.shippingPrice,
-      quantity: 1,
-    });
-
-    const order = await new Order(orderReceived);
-
-    const updateUser = await User.findByIdAndUpdate(req.body.author, {
-      mobile: req.body.mobile,
+    let user = await User.findByIdAndUpdate(req.userId, {  mobile: req.body.mobile,
       dni: req.body.dni,
-      name: req.body.name,
-    });
-    const updateOrder = await User.findById(req.body.author);
+      name: req.body.name,});
 
-    await updateOrder.orders.push(order._id);
-    await updateOrder.save();
-    await order.save();
-    await order.populate("author");
+    user.orders = [...user.orders, order._id],
+  
 
-    const updateProducts = () => {
-      orderReceived.products.forEach(
-        async (i) =>
-          await Products.findByIdAndUpdate(i._id, {
-            view: false,
-            reserved: true,
-          })
-      );
-    };
+    await user.save();
+    // await order.populate("author");
 
-    await updateProducts();
+    await updateProductStatus(orderReceived);
+
     if (req.body.shipping === "Mercado pago") {
-      const responseMP = await mercadopago.preferences.create(mpPreference);
+      const responseMP = await mercadopago.preferences.create(createdMpPreference);
       res.status(200).json({
-        msg: "order Created",
+        msg: "Order Created",
         order: order,
         mp: responseMP.response.init_point,
       });
     } else {
       res.status(200).json({
-        msg: "order Created",
+        msg: "Order Created",
         order: order,
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json(error.message);
   }
 };

@@ -4,15 +4,16 @@ const mongoose = require('mongoose')
 const ProductSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required:[ true, "Debe ingresar el campo nombre"],
+
     },
     price: {
         type: Number,
-        required: true
+        required:[ true, "Debe ingresar el campo precio"],
     },
     images: {
         type: Object,
-        required: true
+        required: false
     },
     description:{
         type: String,
@@ -20,7 +21,7 @@ const ProductSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: true
+        required: false
     },
     stock: {
         type: Number,
@@ -29,7 +30,7 @@ const ProductSchema = new mongoose.Schema({
     },
     size: {
         type: String,
-        required: true
+        required:[ true, "Debe ingresar el campo talle"],
     },
     sale: {
         type: Boolean,
@@ -42,7 +43,7 @@ const ProductSchema = new mongoose.Schema({
     },
     view: {
         type: Boolean,
-        required: true,
+        required: false,
     },
     reserved: {
         type: Boolean,

@@ -19,9 +19,10 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", productRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/orders", ordersRoute);
 app.use("/api/categories", categoriesRoutes);
+
 mongoose
   .connect(
     "mongodb+srv://user:gayatry@cluster0.5yfsd.mongodb.net/feriahermana?retryWrites=true&w=majority"

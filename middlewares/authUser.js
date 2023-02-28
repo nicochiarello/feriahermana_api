@@ -16,12 +16,12 @@ module.exports = async (req, res, next) => {
         req.roles = decodedtoken.roles;
         next();
       } else {
-        res.status(401).json({ message: "Unahutorized" });
+        return res.status(401).json({ message: "Unahutorized" });
       }
     } else {
-      res.status(401).json({ message: "incorrect token" });
+      return res.status(401).json({ message: "incorrect token" });
     }
   } catch (error) {
-    res.status(500).json({ message: error });
+    return res.status(500).json({ message: error });
   }
 };
