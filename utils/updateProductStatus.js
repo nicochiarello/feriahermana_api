@@ -1,8 +1,7 @@
 const Products = require("../models/product");
 
-exports.updateProductStatus = async (order) => {
-  console.log(order);
-  order.products.forEach(
+exports.updateProductStatus = async (products) => {
+  products.forEach(
     async (i) =>
       await Products.findByIdAndUpdate(i._id, {
         view: false,

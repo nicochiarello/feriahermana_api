@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const CategorySchema = new mongoose.Schema({
     name:{
         type: String,
-        required: true
+        required: [true, "El campo nombre es requerido"]
     }
 })
 

@@ -1,10 +1,10 @@
 const axios = require("axios");
 const Order = require("../models/orders");
+const sendEmail = require("../utils/sendEmail");
 
 exports.verifyOrderStatus = async (req, res) => {
   // El id estara en req.body.data.id
   let mp_id = req.body.data.id;
-  console.log(mp_id)
   axios
     .get(`https://api.mercadopago.com/v1/payments/${mp_id}`, {
       headers: {
@@ -15,7 +15,9 @@ exports.verifyOrderStatus = async (req, res) => {
       let orderId = response.data.metadata.order_id;
       if (response.data.status === "approved") {
         // Cambiar estado de orden
-        await Order.findByIdAndUpdate(orderId, { state: 1 });
+        const order = await Order.findByIdAndUpdate(orderId, { state: 1 });
+        // send confirm email
+        await sendEmail(order)
         return res.status(200).json({ oki: "doki" });
       } else {
         await Order.findByIdAndUpdate(orderId, { status: 2 }); 

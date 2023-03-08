@@ -1,7 +1,6 @@
 const Products = require("../models/product");
 
 exports.mpPreference = async (order, orderId) => {
-  console.log(order)
   let items = [];
   for (let product of order.products) {
     let item = await Products.findById(product);
@@ -22,7 +21,7 @@ exports.mpPreference = async (order, orderId) => {
 
   preference.items.push({
     title: "Envío",
-    unit_price: order.shippingPrice,
+    unit_price: 1000,
     quantity: 1,
   });
 

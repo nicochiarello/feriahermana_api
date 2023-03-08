@@ -1,6 +1,4 @@
 const Order = require("../models/orders");
-const User = require("../models/user");
-const Products = require("../models/product");
 const { checkStock } = require("../utils/checkStock");
 const { mpPreference } = require("../utils/mpPreference");
 const { updateProductStatus } = require("../utils/updateProductStatus");
@@ -36,59 +34,33 @@ exports.getAll = async (req, res) => {
 exports.createOrder = async (req, res) => {
   try {
     // Checks if some of the products are already reserved
+
+
     const stock = await checkStock(req.body.products);
 
     if (!stock) {
       throw new Error("stock");
     }
 
-    const orderReceived = {
-      products: req.body.products,
-      author: req.userId,
-      total: req.body.total,
-      shipping: req.body.directionShipping,
-      shippingPrice: req.body.shippingPrice,
-      mobile: req.body.mobile,
-      payment: req.body.shipping,
-    };
 
-    let order = await new Order({...orderReceived, shipping: "test"});
-    let createdMpPreference = await mpPreference(orderReceived, order._id);
+    let order = await new Order(req.body);
+    let createdMpPreference = await mpPreference(req.body, order._id);
 
+    await updateProductStatus(req.body.products);
+    await order.save();
 
-    let user = await User.findByIdAndUpdate(req.userId, {
-      mobile: req.body.mobile,
-      dni: req.body.dni,
-      name: req.body.name,
+    const responseMP = await mercadopago.preferences.create(
+      createdMpPreference
+    );
+
+    res.status(200).json({
+      msg: "Order Created",
+      order: order,
+      mp: responseMP.response.init_point,
     });
 
-    (user.orders = [...user.orders, order._id]), await user.save();
-    // await order.populate("author");
-
-    await updateProductStatus(orderReceived);
-    await order.save()
-
-    if (req.body.shipping === "Mercado pago") {
-      const responseMP = await mercadopago.preferences.create(
-        createdMpPreference
-      );
-
-      console.log(responseMP)
-
-
-      res.status(200).json({
-        msg: "Order Created",
-        order: order,
-        mp: responseMP.response.init_point,
-      });
-    } else {
-      res.status(200).json({
-        msg: "Order Created",
-        order: order,
-      });
-    }
   } catch (error) {
-    res.status(500).json(error.message);
+    res.status(500).json(error.errors);
   }
 };
 
