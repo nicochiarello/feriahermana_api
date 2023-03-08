@@ -6,6 +6,7 @@ const authUser = require("../middlewares/authUser");
 const {verifyOrderStatus} = require("../controllers/verify")
 
 router.get("/all", orderRoutes.getAll);
+router.get("/:id/info", orderRoutes.orderInfo)
 router.post("/create", orderRoutes.createOrder);
 // router.post("/verify", orderRoutes.verify)
 router.delete("/delete", orderRoutes.delete);

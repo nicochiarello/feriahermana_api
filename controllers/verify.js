@@ -15,7 +15,7 @@ exports.verifyOrderStatus = async (req, res) => {
       let orderId = response.data.metadata.order_id;
       if (response.data.status === "approved") {
         // Cambiar estado de orden
-        const order = await Order.findByIdAndUpdate(orderId, { state: 1 });
+        const order = await Order.findByIdAndUpdate(orderId, { payment_status: 1 });
         // send confirm email
         await sendEmail(order)
         return res.status(200).json({ oki: "doki" });

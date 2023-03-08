@@ -31,17 +31,26 @@ exports.getAll = async (req, res) => {
   }
 };
 
+exports.orderInfo = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const foundOrder = await Order.findById(id);
+    res.status(200).json(foundOrder);
+  } catch (error) {
+    res.status(404).json(error);
+  }
+};
+
 exports.createOrder = async (req, res) => {
   try {
     // Checks if some of the products are already reserved
-
 
     const stock = await checkStock(req.body.products);
 
     if (!stock) {
       throw new Error("stock");
     }
-
 
     let order = await new Order(req.body);
     let createdMpPreference = await mpPreference(req.body, order._id);
@@ -58,7 +67,6 @@ exports.createOrder = async (req, res) => {
       order: order,
       mp: responseMP.response.init_point,
     });
-
   } catch (error) {
     res.status(500).json(error.errors);
   }
