@@ -1,4 +1,6 @@
 const Roles = require("../models/roles");
+const Users = require("../models/user")
+const bcrypt = require("bcrypt")
 
 exports.createRoles = async () => {
   try {
@@ -14,3 +16,24 @@ exports.createRoles = async () => {
     console.error(error);
   }
 };
+
+exports.createUser = async () => {
+  try {
+    const count = await Users.estimatedDocumentCount();
+    if (count > 0) {
+      return;
+    }
+    const adminRole = await Roles.findOne({name: "admin"})
+    const user = await new Users({
+      name: "Feria Hermana",
+      email: "admin@feriahermana.com", 
+      // password: "feriahermana",
+      roles: [adminRole._id]
+    })
+    const hashedPassword = await bcrypt.hash("feriahermana", 12);
+    user.password = hashedPassword
+    user.save()
+  } catch (error) {
+    console.log(error)
+  }
+}

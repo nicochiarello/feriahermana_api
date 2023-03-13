@@ -23,7 +23,7 @@ exports.delete = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const getAll = await Order.find();
+    const getAll = await Order.find().sort({createdAt: -1}).populate("products");
 
     res.status(200).json({ orders: getAll });
   } catch (error) {
@@ -35,7 +35,7 @@ exports.orderInfo = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const foundOrder = await Order.findById(id);
+    const foundOrder = await Order.findById(id).populate("products");
     res.status(200).json(foundOrder);
   } catch (error) {
     res.status(404).json(error);

@@ -15,14 +15,19 @@ exports.verifyOrderStatus = async (req, res) => {
       let orderId = response.data.metadata.order_id;
       if (response.data.status === "approved") {
         // Cambiar estado de orden
-        const order = await Order.findByIdAndUpdate(orderId, { payment_status: 1 });
+        const order = await Order.findByIdAndUpdate(orderId, {
+          payment_status: 1,
+        });
         // send confirm email
-        await sendEmail(order)
+        if (!order.email_sent) {
+          await sendEmail(order);
+          order.email_sent = true;
+          await order.save();
+        }
         return res.status(200).json({ oki: "doki" });
       } else {
-        await Order.findByIdAndUpdate(orderId, { status: 2 }); 
+        await Order.findByIdAndUpdate(orderId, { status: 2 });
         return res.status(200).json({ oki: "doki" });
       }
     });
-
 };

@@ -73,10 +73,10 @@ exports.login = async (req, res) => {
           role: userExists.roles 
         });
     } else {
-      res.status(400).json({ msg: "wrong password" });
+      res.status(400).json({ password: "Contraseña incorrecta" });
     }
   } else {
-    res.status(400).json({ msg: "email doesn´t exist" });
+    res.status(400).json({ email: "El email no existe" });
   }
 };
 

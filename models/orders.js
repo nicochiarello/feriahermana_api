@@ -30,13 +30,17 @@ const OrderSchema = mongoose.Schema(
       type: Number, 
       required: false,
     },
-    products: {
-      type: Array,
-      required:[ true, "El campo productos es requerido"],
-    },
+    products: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Products",
+    }],
     total: {
       type: Number,
       required: true,
+    },
+    email_sent: {
+      type: Boolean,
+      default: false
     },
     payment_status: {
       type: Number,
