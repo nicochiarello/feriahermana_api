@@ -50,6 +50,7 @@ exports.getSingleProduct = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
+  console.log(req.files)
   try {
     const product = new Products({
       name: req.body.name,
@@ -58,12 +59,11 @@ exports.create = async (req, res) => {
       size: req.body.size,
       view: req.body.view,
     });
-    console.log(req.body);
     const path = {};
     const uploadImg = async () => {
       let iterator = 0;
       for (const file of req.files) {
-        path[iterator] = { secureUrl: file.location, publicId: file.key };
+        path[iterator] = { secureUrl: file.filename };
         iterator++;
       }
     };

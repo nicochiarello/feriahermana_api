@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
   const token = req.get("token");
 
   try {
-    let decodedtoken = await jwt.verify(token, "feriahermanaAPI2425");
+    let decodedtoken = await jwt.verify(token, process.env.SECRET);
 
     if (decodedtoken) {
       let user = await User.findById(decodedtoken.userId);

@@ -8,6 +8,7 @@ const categoriesRoutes = require("./routes/categories");
 const ordersRoute = require("./routes/orders");
 const shippingRoutes = require("./routes/shippingPrice");
 const testEmailRoute = require("./routes/test");
+const withdrawalsRoutes = require("./routes/withdrawals")
 const initialSetup = require("./libs/initialSetup");
 
 //creates initialSetup if not created yet
@@ -27,11 +28,15 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", ordersRoute);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/shipping", shippingRoutes);
+app.use("/api/withdrawals", withdrawalsRoutes);
 app.use("/api/email", testEmailRoute);
+
+app.use(express.static('public')); 
+app.use('/images', express.static('images'));
 
 mongoose
   .connect(
-    "mongodb+srv://user:gayatry@cluster0.5yfsd.mongodb.net/feriahermana?retryWrites=true&w=majority"
+    "mongodb://localhost:27017/feriahermana"
   )
   .then(() => console.log("db connected"))
   .catch((err) => console.log(err));
@@ -39,5 +44,5 @@ mongoose
 let PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
-  console.log(`server running on port ${PORT}`);
+  console.log(`server is running on port ${PORT}`);
 });

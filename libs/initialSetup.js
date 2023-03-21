@@ -27,7 +27,7 @@ exports.createUser = async () => {
     const user = await new Users({
       name: "Feria Hermana",
       email: "admin@feriahermana.com", 
-      // password: "feriahermana",
+      password: process.env.FH_ADMIN_USER_PASSWORD,
       roles: [adminRole._id]
     })
     const hashedPassword = await bcrypt.hash("feriahermana", 12);
