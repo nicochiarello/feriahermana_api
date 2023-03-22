@@ -29,7 +29,7 @@ app.use("/api/withdrawals", withdrawalsRoutes);
 app.use("/api/email", testEmailRoute);
 
 app.use(express.static('public')); 
-app.use('/images', express.static('images'));
+app.use('api/images', express.static('images'));
 
 mongoose
   .connect(
