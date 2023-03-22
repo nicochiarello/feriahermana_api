@@ -19,9 +19,6 @@ initialSetup.createUser();
 app.use(express.json());
 app.use(cors({ origin: "*"}));
 
-app.get("/", (req, res) => {
-  res.status(200).json("welcome to the api");
-});
 
 app.use("/api", productRoutes);
 app.use("/api/users", userRoutes);
