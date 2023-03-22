@@ -1,7 +1,5 @@
 const Products = require("../models/product");
 
-
-
 exports.getAll = async (req, res) => {
   let { sort } = req.query;
 
@@ -50,7 +48,6 @@ exports.getSingleProduct = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  console.log(req.files)
   try {
     const product = new Products({
       name: req.body.name,
@@ -90,7 +87,6 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     let id = req.params.id;
-    console.log(req.files)
     let updatedImages;
 
     if (req.body.updatedImages) {
@@ -98,8 +94,6 @@ exports.update = async (req, res) => {
     }
 
     let product = await Products.findById(id);
-    console.log(product)
-    console.log(req.body)
 
     let updateImages = () => {
       let aux = { ...product.images };
@@ -108,9 +102,14 @@ exports.update = async (req, res) => {
       }
       for (let updatedImage of Object.entries(updatedImages)) {
         for (let multerImage of req.files) {
-          if (multerImage.originalname.split(".")[0] === updatedImage[1].split(".")[0]) {
-            
-            aux[updatedImage[0]] = { secureUrl: multerImage.location, publicId: multerImage.key };
+          if (
+            multerImage.originalname.split(".")[0] ===
+            updatedImage[1].split(".")[0]
+          ) {
+            aux[updatedImage[0]] = {
+              secureUrl: multerImage.location,
+              publicId: multerImage.key,
+            };
           }
         }
       }
@@ -123,86 +122,17 @@ exports.update = async (req, res) => {
       product[item[0]] = item[1];
     }
 
-    // product.name = name
-    // product.price = price
-    // product.description = description
-    // product.category = category
-    // product.size = size
-
     await product.save();
 
     return res.status(201).json({ msg: "Updated" });
   } catch (error) {
     console.log(error);
   }
-  // try {
-  //   const product = await Products.findById(req.params._id);
-  //   const prevImages = JSON.parse(req.body.prevImages);
-
-  //   console.log(prevImages)
-
-  //   const uploadImages = async () => {
-  //     let iterator = 0;
-  //     let i = 0;
-  //     let aux = [];
-  //     for (let img of oldImages) {
-  //       if (img.secureUrl) {
-  //         aux.push(img);
-  //       } else {
-  //         aux.push({
-  //           secureUrl: req.files[iterator].location,
-  //           publicId: req.files[iterator].key,
-  //         });
-
-  //         iterator = iterator + 1;
-  //       }
-  //     }
-  //     return (product.images = aux);
-  //   };
-
-  //   product.name = req.body.name;
-  //   product.price = req.body.price;
-  //   product.category = req.body.category;
-  //   product.size = req.body.size;
-  //   product.view = req.body.view;
-  //   product.description = req.body.description;
-  //   // if (req.files) {
-  //   //   await uploadImages();
-  //   // }
-
-  //   if (req.body.sale) {
-  //     product.sale = req.body.sale;
-  //   }
-  //   if (req.body.discount) {
-  //     product.discount = req.body.discount;
-  //   }
-  //   const saveProduct = await product.save();
-  //   res.status(202).json({ status: "ok", productUpdated: saveProduct });
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(400).json(error);
-  // }
 };
 
 exports.deleteProduct = async (req, res) => {
   try {
     const product = await Products.findById(req.params.id);
-    // if (product.images) {
-    //   for (let img of product.images) {
-    //     await s3.deleteObject(
-    //       { Bucket: "feria-hermana", key: img.publicId },
-    //       (err, data) => {
-    //         if (err) {
-    //           console.log(err);
-    //         }
-    //         console.log(data);
-    //       }
-    //     );
-    //     // cloudinary.v2.uploader.destroy(img.publicId, function (error, result) {
-    //     //   console.log(result, error);
-    //     // });
-    //   }
-    // }
 
     await product.delete();
     res

@@ -28,8 +28,9 @@ app.use("/api/shipping", shippingRoutes);
 app.use("/api/withdrawals", withdrawalsRoutes);
 app.use("/api/email", testEmailRoute);
 
-app.use(express.static('public')); 
-app.use('api/images', express.static('images'));
+// app.use(express.static('public')); 
+// app.use('/api/images', express.static('/images'));
+app.use('/api', express.static('public'))
 
 mongoose
   .connect(
