@@ -23,9 +23,23 @@ exports.delete = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const getAll = await Order.find().sort({createdAt: -1}).populate("products");
+    const currentPage = req.query.page || 1;
+    const perPage = req.query.items || 24;
+    const totalItems = await Order.find().countDocuments();
 
-    res.status(200).json({ orders: getAll });
+    const getAll = await Order.find()
+      .sort({ createdAt: -1 })
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage)
+      .populate("products");
+
+    res.status(200).json({
+      orders: getAll,
+      nbHits: getAll.length,
+      nbPages: Math.ceil(totalItems / perPage),
+      totalItems: totalItems,
+      currentPage,
+    });
   } catch (error) {
     res.status(404).json(error);
   }

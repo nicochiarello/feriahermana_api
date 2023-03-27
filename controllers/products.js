@@ -18,7 +18,7 @@ exports.getAll = async (req, res) => {
   }
 
   const currentPage = req.query.page || 1;
-  const perPage = req.query.items || 25;
+  const perPage = req.query.items || 24;
   const totalItems = await Products.find(find).countDocuments();
   try {
     const fetchedProducts = await Products.find(find)

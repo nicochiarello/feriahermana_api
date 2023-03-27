@@ -17,7 +17,7 @@ const auth = require("../middlewares/auth");
 router.get("/products", getAll);
 
 // Create products route
-router.post("/product/create", auth, upload.array("images", 5), create);
+router.post("/product/create", auth, upload.array("images", 4), create);
 
 // Update Products route
 router.put("/product/update/:id", auth, upload.array("images"), update);

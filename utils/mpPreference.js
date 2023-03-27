@@ -19,11 +19,5 @@ exports.mpPreference = async (order, orderId) => {
     }
   };
 
-  preference.items.push({
-    title: "Envío",
-    unit_price: 1000,
-    quantity: 1,
-  });
-
   return preference;
 };
