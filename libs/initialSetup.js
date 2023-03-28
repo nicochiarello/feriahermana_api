@@ -24,15 +24,14 @@ exports.createUser = async () => {
       return;
     }
     const adminRole = await Roles.findOne({name: "admin"})
-    const user = await new Users({
+    const user = {
       name: "Feria Hermana",
       email: "admin@feriahermana.com", 
-      password: process.env.FH_ADMIN_USER_PASSWORD,
       roles: [adminRole._id]
-    })
-    const hashedPassword = await bcrypt.hash("feriahermana", 12);
+    }
+    const hashedPassword = await bcrypt.hash(process.env.FH_ADMIN_USER_PASSWORD, 12);
     user.password = hashedPassword
-    user.save()
+    await new Users(user)
   } catch (error) {
     console.log(error)
   }

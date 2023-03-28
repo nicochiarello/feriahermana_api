@@ -5,14 +5,14 @@ const sendEmail = async (order) => {
     host: "smtp.gmail.com",
     port: 587,
     auth: {
-      user: "nicolasch.fcm@gmail.com",
-      pass: "yrazaprigjiipqlt",
+      user: "feriahermana22@gmail.com",
+      pass: process.env.NODEMAILER_PASS,
     },
   };
   const transport = nodemailer.createTransport(config);
   let link = "www.feriahermana.com/orden" + order._id;
   const message = {
-    from: "nicolasch.fcm@gmail.com",
+    from: "feriahermana22@gmail.com",
     to: order.email,
     subject: "Confirmación de compra",
     html: `<!DOCTYPE html>
