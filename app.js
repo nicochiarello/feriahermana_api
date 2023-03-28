@@ -10,6 +10,7 @@ const shippingRoutes = require("./routes/shippingPrice");
 const testEmailRoute = require("./routes/test");
 const withdrawalsRoutes = require("./routes/withdrawals");
 const initialSetup = require("./libs/initialSetup");
+require("dotenv").config();
 
 //creates initialSetup if not created yet
 initialSetup.createRoles();
