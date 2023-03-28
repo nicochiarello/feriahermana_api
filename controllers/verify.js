@@ -22,8 +22,7 @@ exports.verifyOrderStatus = async (req, res) => {
         // send confirm email
         if (!order.email_sent) {
           await sendEmail(order);
-          order.email_sent = true;
-          await order.save();
+          await Order.findByIdAndUpdate(orderId, {email_sent: true})
         }
         return res.status(200).json({ oki: "doki" });
       } else {
