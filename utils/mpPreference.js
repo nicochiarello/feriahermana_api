@@ -6,7 +6,7 @@ exports.mpPreference = async (order, orderId) => {
     let item = await Products.findById(product);
     items.push({ title: item.name, unit_price: item.price, quantity: 1 });
   }
-  let link = "www.feriahermana.com/orden/" + order._id
+  let link = "www.feriahermana.com/orden/" + orderId
   let preference = {
     items,
     back_urls: {
