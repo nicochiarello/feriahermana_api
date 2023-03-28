@@ -10,7 +10,7 @@ const sendEmail = async (order) => {
     },
   };
   const transport = nodemailer.createTransport(config);
-  let link = "www.feriahermana.com/orden" + order._id;
+  let link = "www.feriahermana.com/orden/" + order._id;
   const message = {
     from: "feriahermana22@gmail.com",
     to: order.email,
@@ -22,7 +22,7 @@ const sendEmail = async (order) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>Feria hermana</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
       </head>
       <body>
         <div class="py-4 bg-gray-300 w-full px-2">

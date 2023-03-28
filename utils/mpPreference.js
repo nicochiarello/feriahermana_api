@@ -6,12 +6,13 @@ exports.mpPreference = async (order, orderId) => {
     let item = await Products.findById(product);
     items.push({ title: item.name, unit_price: item.price, quantity: 1 });
   }
+  let link = "www.feriahermana.com/orden/" + order._id
   let preference = {
     items,
     back_urls: {
       failure: "",
       pending: "",
-      success: `feriahermana.com/verify/true?payment=mercadopago&direction=${order.shipping}`,
+      success: link,
     },
     auto_return: "approved",
     metadata: {
