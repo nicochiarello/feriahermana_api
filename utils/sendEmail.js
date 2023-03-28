@@ -45,8 +45,6 @@ const sendEmail = async (order) => {
   };
 
   const send = await transport.sendMail(message);
-
-  res.status(200).json({ oki: "doki" });
 };
 
 module.exports = sendEmail;
