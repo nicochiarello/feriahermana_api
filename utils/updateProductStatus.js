@@ -1,13 +1,11 @@
 const Products = require("../models/product");
 
 exports.updateProductStatus = async (products) => {
-  products.forEach(
-    async (i) =>
-      await Products.findByIdAndUpdate(i._id, {
-        view: false,
-        reserved: true,
-      })
-  );
+  for (let product of products) {
+    await Products.findByIdAndUpdate(product, {
+      reserved: true,
+    });
+  }
 
   return;
 };

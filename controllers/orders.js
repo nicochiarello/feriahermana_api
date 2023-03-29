@@ -63,7 +63,8 @@ exports.createOrder = async (req, res) => {
     const stock = await checkStock(req.body.products);
 
     if (!stock) {
-      throw new Error("stock");
+      // throw new Error("stock");
+      return res.status(500).json({stock: "Uno de los productos solicitados no tiene stock"});
     }
 
     let order = await new Order(req.body);
