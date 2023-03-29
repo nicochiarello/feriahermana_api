@@ -31,7 +31,8 @@ exports.createUser = async () => {
     }
     const hashedPassword = await bcrypt.hash(process.env.FH_ADMIN_USER_PASSWORD, 12);
     user.password = hashedPassword
-    await new Users(user)
+    const newUser = await new Users(user)
+    await newUser.save()
   } catch (error) {
     console.log(error)
   }
