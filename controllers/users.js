@@ -82,7 +82,7 @@ exports.login = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const users = await User.find({}).populate("orders");
+    const users = await User.find({});
     res.status(200).json({ users, nbhits: users.length });
   } catch (error) {
     res.status(500).json({ error });
