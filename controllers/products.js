@@ -1,4 +1,6 @@
 const Products = require("../models/product");
+const path = require("path");
+const fs = require("fs");
 
 exports.getAll = async (req, res) => {
   let { sort } = req.query;
@@ -107,8 +109,7 @@ exports.update = async (req, res) => {
             updatedImage[1].split(".")[0]
           ) {
             aux[updatedImage[0]] = {
-              secureUrl: multerImage.location,
-              publicId: multerImage.key,
+              secureUrl: multerImage.filename,
             };
           }
         }
@@ -133,7 +134,13 @@ exports.update = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const product = await Products.findById(req.params.id);
-
+    const directoryPath = path.join(__dirname, "../public/images/");
+    for (const file of Object.entries(product.images)) {
+      console.log(path.join(directoryPath, file[1].secureUrl));
+      fs.unlink(path.join(directoryPath, file[1].secureUrl), (err) => {
+        if (err) throw err;
+      });
+    }
     await product.delete();
     res
       .status(200)
@@ -145,6 +152,16 @@ exports.deleteProduct = async (req, res) => {
 
 exports.deleteAll = async (req, res) => {
   try {
+    let directory = path.join(__dirname, "../public/images/")
+    fs.readdir(directory, (err, files) => {
+      if (err) throw err;
+    
+      for (const file of files) {
+        fs.unlink(path.join(directory, file), (err) => {
+          if (err) throw err;
+        });
+      }
+    });
     const deleteAll = await Products.deleteMany({});
     res.status(200).json("deleted");
   } catch (error) {
